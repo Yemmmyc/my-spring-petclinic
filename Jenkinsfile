@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/Yemmmyc/spring-petclinic-docker.git', branch: 'main'
+                git url: 'https://github.com/Yemmmyc/my-spring-petclinic.git', branch: 'main'
             }
         }
 
