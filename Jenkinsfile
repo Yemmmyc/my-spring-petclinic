@@ -9,14 +9,12 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo 'Checking out source code...'
                 git url: 'https://github.com/Yemmmyc/spring-petclinic-docker.git', branch: 'main'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Building Maven project...'
                 bat 'mvn clean package'
             }
         }
@@ -29,30 +27,14 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo "Stopping any previous instance running on port ${APP_PORT}..."
                 bat """
-                    @echo off
-                    for /f "tokens=5" %%a in ('netstat -ano ^| find ":${APP_PORT}" ^| find "LISTENING"') do (
-                        echo Killing PID %%a on port ${APP_PORT}
-                        taskkill /PID %%a /F
-                    )
+                    for /f "tokens=5" %%a in ('netstat -ano ^| find ":${APP_PORT}" ^| find "LISTENING"') do taskkill /PID %%a /F
                 """
-
-                echo "Starting application on port ${APP_PORT}..."
                 bat """
                     cd target
                     start java -jar %JAR_NAME% --server.port=${APP_PORT}
                 """
             }
-        }
-    }
-
-    post {
-        success {
-            echo '✅ Deployment successful!'
-        }
-        failure {
-            echo '❌ Build or deployment failed.'
         }
     }
 }
